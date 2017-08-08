@@ -1,0 +1,88 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+void AddMatrix(int *a,int *b,int m,int n)
+{
+	int j;
+	for(j=0;j<n*m;j++,a++,b++)
+	*a=*a+*b;
+}
+void MltMatrix(int *a,int *b,int *c,int m,int k,int n)
+{
+	int x,y,z,t=0;
+	for(x=0;x<m;x++)
+	for(y=0;y<k;y++)
+	{
+		for(z=0;z<n;z++)
+		t+=*(a+n*x+z)**(b+k*z+y);
+		*(c+m*x+y)=t;
+	}
+}
+void PutMatrix(int *p,int m,int n)
+{
+	int i,j;
+	for(i=0;i<m;i++)
+	{
+		for(j=0;j<n;j++,p++)
+		printf("%d	",*p);
+		printf("\n");
+	}
+}
+main()
+{
+	int m,n,k,i,j,*a,*b,*c;
+	srand((unsigned)time(NULL));
+	printf("请选择：1.矩阵加法，2.矩阵乘法\n");
+	scanf("%d",&i);
+	if(i==1)
+	{
+		printf("请输入矩阵的行数和列数,中间用空格隔开\n");
+		scanf("%d %d",&m,&n);
+		int a1[m][n];
+		int a2[m][n];
+		a=a1[0];
+		b=a2[0];
+		for(i=0;i<m*n;i++,a++,b++)
+		{
+			*a=rand()%100;
+			*b=rand()%100;
+		}
+		a=a1[0];
+		b=a2[0];
+		printf("第一个矩阵为\n");
+		PutMatrix(a,m,n);
+		printf("第二个矩阵为\n");
+		PutMatrix(b,m,n);
+		AddMatrix(a,b,m,n);
+		printf("结果：\n");
+		PutMatrix(a,m,n);
+	}
+	else if(i==2)
+	{
+		printf("请输入第一个矩阵的行数和列数和第二个矩阵的列数,中间用空格隔开\n");
+		scanf("%d %d  %d",&m,&n,&k);
+		int a1[m][n];
+		int a2[n][k];
+		int a3[m][k];
+		a=a1[0];
+		b=a2[0];
+		c=a3[0];
+		for(i=0;i<m*n;i++,a++)
+		*a=rand()%100;
+		for(i=0;i<n*k;i++,b++)
+		*b=rand()%100;
+		a=a1[0];
+		b=a2[0];
+		printf("第一个矩阵为\n");
+		PutMatrix(a,m,n);
+		printf("第二个矩阵为\n");
+		PutMatrix(b,n,k);
+		MltMatrix(a,b,c,m,k,n);
+		printf("结果：\n");
+		PutMatrix(c,m,k);
+	}
+	else
+	{
+		printf("输入错误！"); 
+	}
+}
