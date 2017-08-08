@@ -1,0 +1,28 @@
+#include<stdio.h>
+int gcd(int a,int b)
+{
+	int r;
+	if(a<b)
+	{
+		r=a,a=b,b=r;
+	}
+	while((a%b)!=0)
+	{
+		r=a,a=b,b=r%a;
+	}
+	return b;
+}
+int gbs(int x,int y,int c)
+{
+c=((x/c)*(y/c)*c);
+return c;
+}
+main()
+{
+	int m,n,p,q;
+	printf("请输入两个整数。");
+	scanf("%d,%d",&m,&n);
+	p=gcd(m,n);
+	q=gbs(m,n,p);
+	printf("%d和%d的最大公约数为%d;最小公倍数为%d。",m,n,p,q);
+}
