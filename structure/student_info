@@ -1,0 +1,127 @@
+#include<stdio.h>
+#define N 5
+struct student
+	{	int NUM;
+		char name[16];
+		char sex[5];
+		int age;
+		float grade;
+	};
+void InputStruct(struct student*p)
+{
+	printf("学号："),scanf("%d",&p->NUM),getchar();
+	printf("姓名："),scanf("%s",&p->name),getchar();
+	printf("性别："),scanf("%s",&p->sex),getchar();
+	printf("年龄："),scanf("%d",&p->age),getchar();
+	printf("成绩："),scanf("%f",&p->grade),getchar(); 
+}
+void PrintStruct(struct student*p)
+{
+	printf("%d	%s	%c	%d	%.1f\n",p->NUM,p->name,p->sex,p->age,p->grade);
+}
+void BubbleSort(struct student**p)
+{
+	int i,j,k;
+	student*b;
+	for(i=N-1;i>0;i--)
+	{
+		k=1;
+		for(j=0;j<i;j++)
+		{
+			if((**(p+j)).grade<(**(p+j+1)).grade)
+			{
+				b=*(p+j);
+				*(p+j)=*(p+j+1);
+				*(p+j+1)=b;
+				k=0;
+			}
+		}
+		if(k==1)break;
+	}
+}
+void SelectSort(struct student**q)
+{
+	int i,j,k;
+	student *a;
+	for(i=0;i<N-1;i++)
+	{
+		k=i;
+		for(j=i;j<N-1;j++)
+		if((**(q+k)).grade<(**(q+j+1)).grade)
+		k=j+1;
+		if(k!=i)
+		{
+			a=*(q+i);
+			*(q+i)=*(q+k);
+			*(q+k)=a;
+		}
+	}
+}
+void SelectSort1(student a[],int n){
+	student*b[N];
+	int i,j,min;
+	student *t;
+	for(i=0;i<n;i++) b[i]=a+i;
+	for(i=0;i<n-1;i++){
+		for(min=i,j=i+1;j<n;j++) if((*(b+min))->grade>(*(b+j))->grade) min=j;
+		if(min!=i) {t=b[i];b[i]=b[min];b[min]=t;}
+	}
+	printf("选择排序结果：\n");
+	for(i=0;i<n;i++) PrintStruct(*(b+i));
+	printf("\n");
+}
+void BubbleSort1(student a[],int n){
+	student*b[N];
+	int i,j;
+	student *t;
+	for(i=0;i<n;i++) b[i]=a+i;
+	for(i=0;i<n-1;i++){
+		for(j=0;j<n-i-1;j++) if((*(b+j))->grade>(*(b+j+1))->grade) {t=*(b+j);*(b+j)=*(b+j+1);*(b+j+1)=t;}
+	}
+	printf("冒泡排序结果：\n");
+	for(i=0;i<n;i++) PrintStruct(*(b+i));
+	printf("\n");
+}
+main()
+{
+	student groap[N],*p[N],**q;
+	int i;
+	for(i=0;i<N;i++)
+	p[i]=&groap[i];
+	q=p;
+	printf("请输入学生信息\n");
+	for(i=0;i<N;i++)
+	{
+		printf("第%d位学生：\n",i+1);
+		InputStruct(p[i]);
+	}
+	printf("排序前：\n");
+	printf("学号	姓名	性别	年龄	成绩\n");
+	for(i=0;i<N;i++)
+	PrintStruct(p[i]);
+	while(1)
+	{
+		printf("请选择：1.选择排序；2.冒泡排序;3.查看选择排序结果；4.查看冒泡排序结果\n");
+		scanf("%d",&i);
+		if(i==1)
+		{
+			SelectSort(q);
+			printf("排序后\n");
+			printf("学号	姓名	性别	年龄	成绩\n");
+			for(i=0;i<N;i++)
+			PrintStruct(p[i]);
+		}
+		else if(i==2)
+		{
+			BubbleSort(q);
+			printf("排序后\n");
+			printf("学号	姓名	性别	年龄	成绩\n");
+			for(i=0;i<N;i++)
+			PrintStruct(p[i]);
+		}
+		else if(i==3)
+		SelectSort1(groap,N);
+		else if(i==4)
+		BubbleSort1(groap,N);
+	}
+}
