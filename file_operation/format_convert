@@ -1,0 +1,72 @@
+#include<stdio.h>
+#include<stdlib.h>
+FILE*fp,*fq;
+main()
+{
+	char a,b;
+	int i=1,j=0,k=1;
+	if(!(fp=fopen("prototype.cpp","r+"))){printf("打开源程序失败\n");return 0;}
+	if(!(fq=fopen("output.cpp","w+"))){printf("创建打印文件失败\n");return 0;}
+	fread(&a,1,1,fp);
+	while(!feof(fp))
+	{
+		if(k%2)
+		if(a=='/')
+		{
+			fread(&b,1,1,fp);
+			if(b!='/'&&b!='*')
+			{
+				fseek(fp,-1,1);
+				fseek(fp,0,1);
+			}
+			else if(b=='/')
+			{
+				while(a!='\n')
+				fread(&a,1,1,fp);
+				continue;
+			}
+			else
+			{
+				fread(&b,1,1,fp);
+				a=b;
+				fread(&b,1,1,fp);
+				while(a!='*'||b!='/')
+				{
+					a=b;
+					fread(&b,1,1,fp);
+				}
+				fread(&a,1,1,fp);
+				if(a!='\n')continue;
+				if(j==1)
+				continue;
+				else
+				{
+					fread(&a,1,1,fp);
+					continue;
+				}
+			}
+		}
+		if(a=='"')k++;
+		if(i==1)
+		{
+			fprintf(fq,"第1行:");
+			i++;
+			j=0;
+		}
+		if(a=='\n')
+		{
+			fprintf(fq,"\n第%d行:",i);
+			i++;
+			j=0;
+			fread(&a,1,1,fp);
+		}
+		else
+		{
+			j=1;
+			fprintf(fq,"%c",a);
+			fread(&a,1,1,fp);
+		}
+	}
+	printf("格式转换完成\n");
+	system("pause");
+}
