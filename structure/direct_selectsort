@@ -1,0 +1,78 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct student
+	{	int num;
+		char name[16];
+		char sex;
+		int age;
+		float grade;
+		student*next;
+	};
+void InputStruct(struct student*p)
+{
+	printf("姓名："),scanf("%s",&p->name),getchar();
+	printf("性别："),scanf("%c",&p->sex),getchar();
+	printf("年龄："),scanf("%d",&p->age),getchar();
+	printf("成绩："),scanf("%f",&p->grade),getchar(); 
+}
+student*CreateListR(void)
+{
+	student*head,*p,**q;
+	int i,num;
+	for(i=0;;i++)
+	{
+		printf("请输入学号，按0退出\n");
+		scanf("%d",&num);
+		if(num==0)break;
+		p=(student*)malloc(sizeof(student));
+		p->num=num;
+		InputStruct(p);
+		if(i==0){head=p;q=&p->next;}
+		*q=p;
+		q=&p->next;
+	}
+	*q=NULL;
+	return head;
+}
+void PrintList(student*p)
+{
+	if(!p){printf("没有记录！\n");return;}
+	printf("学生列表\n学号	姓名	性别	年龄	分数\n");
+	while(p)
+	{
+		printf("%d	%s	%c	%d	%.1f\n",p->num,p->name,p->sex,p->age,p->grade);
+		p=p->next;
+	}
+}
+student*SelectSort(student*head)
+{
+	int i;
+	student*a,*b,*c,*d,*e;
+	a=b=d=head;
+	c=head->next;
+	for(i=1;c;i++)
+	{
+		while(c)//找出最小值b; 
+		{
+			if(b->num>c->num)
+			{b=c;e=d;}
+			d=c;
+			c=c->next;
+		}
+		if(a!=b)//交换a,b; 
+		{e->next=a;d=a->next;a->next=b->next;b->next=d;a=b;}
+		if(i==1)head=a;
+		a=a->next;
+		b=d=a;
+		c=a->next;
+	}
+	return head;
+}
+main()
+{
+	student*head;
+	head=CreateListR();
+	PrintList(head);
+	head=SelectSort(head);
+	PrintList(head);
+}
