@@ -1,0 +1,43 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+void sort(int n,int **q)
+{
+	int i,j,k,*b;
+	for(i=n;i>0;i--)
+	{
+		k=1;
+		for(j=0;j<i;j++)
+		{
+			if(**(q+j)<**(q+j+1))
+			{
+				b=*(q+j);
+				*(q+j)=*(q+j+1);
+				*(q+j+1)=b;
+				k=0;
+			}
+		}
+		if(k==1)break;
+	}
+}
+main()
+{
+	int i,n,**q;
+	srand((unsigned)time(NULL));
+	printf("请输入数组长度\n");
+	scanf("%d",&n);
+	int a[n],*p[n];
+	q=p;
+	for(i=0;i<n;i++)
+	{
+		a[i]=rand()%100;
+		p[i]=&a[i];
+	}
+	printf("排序前\n");
+	for(i=0;i<n;i++)
+	printf("%d	",*p[i]);
+	sort(n,q);
+	printf("排序后\n");
+	for(i=0;i<n;i++)
+	printf("%d	",*p[i]);
+}
