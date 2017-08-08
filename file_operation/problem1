@@ -1,0 +1,22 @@
+#include<stdio.h>
+#include<stdlib.h>
+FILE*fp;
+main()
+{
+	int i=0,j=0,k=0;
+	char a;
+	fp=fopen("test.cpp","r");
+	if(!fp){printf("打开文件失败\n");return 0;}
+	while(!feof(fp))
+	{
+		fscanf(fp,"%c",&a);
+		if(a=='\n')i++;
+		if(a==';')j++;
+		k++;
+	}
+	k--;
+	if(a=='\n')i--;
+	if(a==';')j--;
+	fclose(fp);
+	printf("有%d个字符，%d个语句,%d行",k,j,i+1);
+}
