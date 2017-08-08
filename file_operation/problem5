@@ -1,0 +1,31 @@
+#include<stdio.h>
+#include<stdlib.h>
+FILE*fp;
+main()
+{
+	int a;
+	if(!(fp=fopen("int.dat","rb+"))){printf("´ò¿ªÎÄ¼þÊ§°Ü\n");return 0;}
+	fread(&a,4,1,fp);
+	printf("%d	",a);
+	while(!feof(fp))
+	{
+		if(a%2)
+		{
+			a=2*a;
+			fseek(fp,-4,1);
+			fwrite(&a,4,1,fp);
+			fseek(fp,0,1);
+		}
+		else
+		{
+			a++;
+			fseek(fp,-4,1);
+			fwrite(&a,4,1,fp);
+			fseek(fp,0,1);
+		}
+		printf("%d	",a);
+		fread(&a,4,1,fp);
+		printf("%d	",a);
+	}
+	fclose(fp);
+}
