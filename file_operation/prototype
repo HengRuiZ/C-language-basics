@@ -1,0 +1,153 @@
+;IR2：对应主 8259 IRQ7，中断向量号0FH
+;IR1：对应从8259 IRQ10，中断向量号72H
+
+   IRQ_IVADD  EQU       01C8H       ;IRQ10对应的中断矢量地址
+    IRQ_OCW1  EQU       0A1H        ;IRQ10对应PC 机内部8259 的OCW1 地址
+    IRQ_OCW2  EQU       0A0H        ;IRQ10对应PC 机内部8259 的OCW2 地址
+      IRQ_IM  EQU       0FBH        ;IRQ10对应的中断屏蔽字（"与"操作）
+
+  IRQ2_IVADD  EQU       003CH       ;IRQ7 对应的中断矢量地址003CH
+   IRQ2_OCW1  EQU       021H        ;IRQ7 对应PC 机内部8259 的OCW1 地址
+   IRQ2_OCW2  EQU       020H        ;IRQ7 对应PC 机内部8259 的OCW2 地址
+     IRQ2_IM  EQU       07FH        ;IRQ7 对应的中断屏蔽字07FH
+
+        DATA  SEGMENT
+        DATA  ENDS
+        CODE  SEGMENT
+              ASSUME    CS:CODE,DS:DATA
+      START:
+              MOV       AX,DATA
+              MOV       DS,AX
+	
+   INT_8251:
+              MOV       DX,3021H
+              MOV       AL,00H
+              OUT       DX,AL
+              CALL      DELAY
+              OUT       DX,AL
+              CALL      DELAY
+              OUT       DX,AL
+              CALL      DELAY
+              MOV       AL,40H
+              OUT       DX,AL
+              CALL      DELAY
+              MOV       AL,7EH
+              OUT       DX,AL
+              CALL      DELAY
+              MOV       AL,31H
+              OUT       DX,AL
+              CALL      DELAY
+               ;保护原中断向量，设置新中断向量 
+              MOV       AL,72H
+              MOV       AH,35H
+              INT       21H
+              PUSH      ES
+              PUSH      BX
+              MOV       AX,SEG KID
+              MOV       DS,AX
+              MOV       DX,OFFSET KID
+              MOV       AL,72H
+              MOV       AH,25H
+              INT       21H
+	     
+              MOV       AL,0FH
+              MOV       AH,35H
+              INT       21H
+              PUSH      ES
+              PUSH      BX
+              MOV       AX,SEG FAT
+              MOV       DS,AX
+              MOV       DX,OFFSET FAT
+              MOV       AL,0FH
+              MOV       AH,25H
+              INT       21H
+                ;设置中断位 
+              IN        AL,0A1H
+              PUSH      AX
+              AND       AL,0FBH
+              OUT       0A1H,AL
+              IN        AL,21H
+              PUSH      AX
+              AND       AL,7FH
+              OUT       21H,AL
+	
+              MOV       AH,01H
+              INT       21H
+	
+              POP       AX
+              OUT       21H,AL
+              POP       AX
+              OUT       0A1H,AL
+              ;恢复现场 
+              POP       DX
+              POP       AX
+              MOV       DS,AX
+              MOV       AL,0FH
+              MOV       AH,25H
+              INT       21H
+              POP       DX
+              POP       AX
+              MOV       DS,AX
+              MOV       AL,72H
+              MOV       AH,25H
+              INT       21H
+	
+              MOV       AX,4C00H
+              INT       21H
+	
+         KID  PROC      NEAR
+              PUSH      AX
+              PUSH      DX
+              MOV       AL,31H
+              MOV       AH,0EH
+              INT       10H
+	
+        TX1:
+              MOV       DX,3021H
+              IN        AL,DX
+              TEST      AL,01H
+              JZ        TX1
+              MOV       DX,3020H
+              MOV       AL,31H
+              OUT       DX,AL
+	
+              MOV       AL,20H
+              OUT       0A0H,AL
+              OUT       20H,AL
+              POP       DX
+              POP       AX
+              IRET
+              ENDP      KID
+
+         FAT  PROC      NEAR
+              PUSH      AX
+              PUSH      DX
+              MOV       AL,32H
+              MOV       AH,0EH
+              INT       10H
+        TX2:
+              MOV       DX,3021H
+              IN        AL,DX
+              TEST      AL,01H
+              JZ        TX2
+              MOV       DX,3020H
+              MOV       AL,32H
+              OUT       DX,AL
+              MOV       AL,20H
+              OUT       20H,AL
+              POP       DX
+              POP       AX
+              IRET
+              ENDP      FAT
+	
+       DELAY  PROC      NEAR
+              PUSH      CX
+              MOV       CX,02H
+      AGAIN:  LOOP      AGAIN
+              POP       CX
+              RET
+       DELAY  ENDP
+
+
+        CODE  ENDS
+              END       START
