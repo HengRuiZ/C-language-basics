@@ -1,0 +1,11 @@
+void genswap(void *a,void*b,int size)
+{
+	char t;
+	int i;
+	for(i=0;i<size;i++)
+	{
+		t=*((char*)a+i);
+		*((char*)a+i)=*((char*)b+i);
+		*((char*)b+i)=t;
+	}
+}
