@@ -1,0 +1,311 @@
+#include<stdio.h>
+#include<stdlib.h>
+FILE*fp;
+struct student{
+	int num;
+	char name[16];
+	float grade;
+	student*next;
+};
+void getstudent(student*p,int num)
+{
+	p->num=num;
+	printf("姓名\n");
+	getchar();
+	gets(p->name);
+	printf("分数\n");
+	scanf("%f",&p->grade);
+}
+student*CreateListF(void)
+{
+	int num,i;
+	student*head,*p;
+	for(i=0;;i++)
+	{
+		printf("请输入学号，按0退出\n");
+		scanf("%d",&num);
+		if(num==0)break;
+		p=(student*)malloc(sizeof(student));
+		getstudent(p,num);
+		p->next=head;
+		if(i==0)p->next=NULL;
+		head=p;
+	}
+	return head;
+}
+student*CreateListR(void)
+{
+	student*head,*p,**q;
+	int i,num;
+	for(i=0;;i++)
+	{
+		printf("请输入学号，按0退出\n");
+		scanf("%d",&num);
+		if(num==0)break;
+		p=(student*)malloc(sizeof(student));
+		getstudent(p,num);
+		if(i==0){head=p;q=&p->next;}
+		*q=p;
+		q=&p->next;
+	}
+	*q=NULL;
+	return head;
+}
+student*InsertO(student *q,student *p)
+{
+	student*head=q;
+	while(1)
+	{
+		if(q->num<p->num)
+		{p->next=q;return p;}
+		if(q->next==0)
+		{q->next=p;p->next=NULL;return head;}
+		if(q->num>=p->num&&(q->next)->num<p->num)
+		{p->next=q->next;q->next=p;return head;}
+		else q=q->next;
+	}
+}
+student*InsertN(student*q,student*p,int n)
+{
+	int i;
+	student*head=q;
+	if(n==1){p->next=q;return p;}
+	for(i=1;;i++)
+	{if(i==n-1||q->next==0){p->next=q->next;q->next=p;return head;}
+	q=q->next;
+	}
+}
+student*ReadList()
+{
+	int i;
+	char b[20];
+	student*p,*head,**q;
+	fp=fopen("学生信息管理系统.txt","r");
+	if(!fp){printf("打开文件失败\n");return 0;}
+	for(i=4;i;i--)fscanf(fp,"%s",&b);
+	for(i=0;!feof(fp);i++)
+	{
+		p=(student*)malloc(sizeof(student));
+		fscanf(fp,"%d	%s	%f\n",&p->num,&p->name,&p->grade);
+		if(i==0){head=p;q=&p->next;}
+		*q=p;
+		q=&p->next;
+	}
+	fclose(fp);
+	p->next=NULL;
+	return head;
+}
+student*CreateListO(void)
+{
+	student*head,*p;
+	int num,i;
+	for(i=1;;i++)
+	{
+		printf("请输入学号，输入0退出\n");
+		scanf("%d",&num);
+		if(num==0)break;
+		p=(student*)malloc(sizeof(student));
+		getstudent(p,num);
+		if(i==1){head=p;p->next=NULL;continue;}
+		head=InsertO(head,p);
+	}
+	return head;
+}
+void PrintList(student*p)
+{
+	if(!p){printf("没有记录！\n");return;}
+	printf("学生列表\n学号	姓名	分数\n");
+	while(p)
+	{
+		printf("%d	%s	%.1f\n",p->num,p->name,p->grade);
+		p=p->next;
+	}
+}
+void FPrintList(student*p)
+{
+	fp=fopen("学生信息管理系统.txt","w");
+	if(!p){printf("打开文件失败\n");return;}
+	fprintf(fp,"学生列表\n学号	姓名	分数\n");
+	while(p)
+	{
+		fprintf(fp,"%d	%s	%.1f\n",p->num,p->name,p->grade);
+		p=p->next;
+	}
+	fclose(fp);
+}
+student* Insert(student*head)
+{
+	student*p,*q;
+	int num,n;
+	q=head;
+	p=(student*)malloc(sizeof(student));
+	printf("请输入学号\n");
+	scanf("%d",&num);
+	getstudent(p,num);
+	while(1)
+	{
+		if(q->num>q->next->num)q=q->next;
+		else
+		{
+			printf("插入在哪一位之前？(若输入数字过大将插在末尾)\n");
+			scanf("%d",&n);
+			return InsertN(head,p,n);
+		}
+		if(q->next==0)
+		{return InsertO(head,p);}
+	}
+}
+student* NumDelete(student*head,int n)
+{
+	int i;
+	student*p,*q;
+	q=p=head;
+	for(i=0;p->num!=n;i++)
+	{
+		if(p->next==NULL){printf("未找到该条记录\n");return head;}
+		q=p;p=p->next;
+	}
+	if(i==0){head=head->next;free(p);}
+	else{q->next=p->next;free(p);}
+	return head;
+}
+int CAL(char a[])
+{
+	int i;
+	for(i=0;a[i]!='\0';i++);
+	return i;
+}
+int StrSearch(char a[],char b[])//返回值是a的第几位；返回0则没有结果
+{
+	int j,k;
+	if(CAL(a)<CAL(b))return 0;
+	for(j=0;j<=CAL(a)-CAL(b);j++)
+	if(a[j]==b[0])
+	if(CAL(b)==1)return j+1;
+	else
+	for(k=1;k<CAL(b);k++)
+	{
+		if(a[j+k]!=b[k])break;
+		if(k==CAL(b)-1)
+		return j+1;
+	}
+}
+void SearchName(student*head,char a[])
+{
+	int i,j=0;
+	do{i=0;i=j=StrSearch(head->name,a);if(i!=0)printf("%d	%s	%.1f\n",head->num,head->name,head->grade);head=head->next;}
+	while(head!=NULL);
+	if(j==0)printf("抱歉，暂无搜索结果\n");
+}
+int NOS(student*head)
+{
+	int i=0;
+	while(head!=NULL){i++;head=head->next;}
+	return i;
+}
+float GA(student*head)
+{
+	float x=0;
+	int i=0;
+	while(head){i++;x+=head->grade;head=head->next;}
+	return x/i;
+}
+float RenYing(student*head)
+{
+	float x=0;
+	while(head){x=x>head->grade?x:head->grade;head=head->next;}
+	return x;
+}
+int Loser(student*head)
+{
+	int i=0;
+	while(head){if(head->grade<=60)i++;head=head->next;}
+	return i;
+}
+student*Destroy(student*head)
+{
+	student*q[100];
+	student*p=head;
+	int i=0,j;
+	while(head){q[i]=head;head=head->next;i++;}
+	for(j=0;j<i;j++)
+	free(q[j]);
+	return NULL;
+}
+main()
+{
+	student*head=NULL;
+	char a[20];
+	int i,j=0,n;
+	float x,y;
+	while(1)
+	{
+		printf("学生信息管理系统\n===============================\n0.退出\n1.创建学生记录链表\n2.打印全部学生记录\n3.插入一条新的学生记录\n4.按学号删除一条学生记录\n5.按姓名查找学生记录\n6.统计学生人数\n7.统计学生的平均成绩，最高分和不及格人数\n8.销毁学生链表\n");
+		scanf("%d",&i);
+		switch(i)
+		{
+			case 0:{
+				return 0;
+				break;
+			}
+			case 1:{
+				if(j){printf("链表已存在,是否放弃并重建？\n1.是    2.否\n");scanf("%d",&i);if(i==1)Destroy(head);else break;}
+				i=0;
+				while(i<1||i>4)
+				{
+					printf("请选择：1.头插    2.尾插    3.有序插    4.读文件\n");
+					scanf("%d",&i);
+					if(i==1)
+					{head=CreateListF();j=1;}
+					else if(i==2)
+					{head=CreateListR();j=1;}
+					else if(i==3)
+					{head=CreateListO();j=1;}
+					else if(i==4)
+					head=ReadList();
+				}
+				break;
+			}
+			case 2:{
+				printf("1.屏幕输出    2.磁盘文件输出\n");
+				scanf("%d",&i);
+				if(i==1)
+				PrintList(head);
+				else if(i==2)
+				FPrintList(head);
+				break;
+			}
+			case 3:{
+				head=Insert(head);
+				break;
+			}
+			case 4:{
+				printf("删除学号为多少的记录？\n");
+				scanf("%d",&n);
+				NumDelete(head,n);
+				break;
+			}
+			case 5:{
+				printf("请输入关键字\n");
+				gets(a);
+				SearchName(head,a);
+				break;
+			}
+			case 6:{ 
+				printf("学生人数为%d\n",NOS(head));
+				break;
+			}
+			case 7:{
+				x=GA(head);
+				y=RenYing(head);
+				n=Loser(head);
+				printf("平均成绩为%.1f，最高分为%.1f,不及格人数为%d\n",x,y,n);
+				break;
+			}
+			case 8:{
+				head=Destroy(head);
+				break;
+			}
+		}
+	}
+}
