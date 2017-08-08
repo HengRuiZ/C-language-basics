@@ -1,0 +1,11 @@
+#include<stdio.h>
+#include<stdlib.h>
+main(int argc,char *argv[])
+{
+	float a[4];
+	int i;
+	for(i=1;i<argc;i++)
+	a[i]=atof(argv[i]);
+	printf("%.2f",(a[2]+a[1])*a[3]/2);
+	system("pause");
+}
