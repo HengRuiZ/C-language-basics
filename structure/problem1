@@ -1,0 +1,30 @@
+#include<stdio.h> 
+#include<stdlib.h>
+struct book{
+	int num;
+	char name[40];
+	char author[20];
+	char press[20];
+	float price;
+};
+main()
+{
+	int i;
+	float b=0;
+	book a[10];
+	for(i=1;i<11;i++)
+	{
+		printf("请输入第%d本书的书号\n",i);
+		scanf("%d",&a[i].num);
+		printf("请输入书名\n");
+		getchar();
+		gets(a[i].name);
+		printf("请输入作者\n");
+		gets(a[i].author);
+		printf("请输入价格\n");
+		scanf("%f",&a[i].price);
+		b+=a[i].price;
+	}
+	printf("平均价格为%.2f",b/10);
+	system("pause");
+}
