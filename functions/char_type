@@ -1,0 +1,32 @@
+#include<stdio.h>
+int CAL(char a[])
+{
+	int i;
+	for(i=0;a[i]!='\0';i++);
+	return i;
+} 
+void sort(char a[])
+{
+	int i,a1=0,b=0,c=0,d=0;
+	char *p=a;
+	for(i=0;i<CAL(a);i++)
+	{
+		if(*(p+i)>64&&*(p+i)<91)
+		a1++;
+		if(*(p+i)>96&&*(p+i)<123)
+		b++;
+		if(*(p+i)>47&&*(p+i)<58)
+		c++;
+		if(*(p+i)==32)
+		d++;
+	}
+	i=CAL(a)-a1-b-c-d;
+	printf("大写字母数量为%d,小写字母数量为%d,数字数量为%d,空格数量为%d,其他字符数量为%d.",a1,b,c,d,i);
+}
+main()
+{
+	char a[1000];
+	printf("请输入字符串\n");
+	gets(a);
+	sort(a);
+}
