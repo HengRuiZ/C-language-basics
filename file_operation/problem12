@@ -1,0 +1,22 @@
+#include<stdio.h>
+#include<stdlib.h>
+FILE*fp,*fq;
+main()
+{
+	char a;
+	if(!(fp=fopen("ABC.txt","r+"))){printf("´ò¿ªÎÄ¼þÊ§°Ü\n");return 0;}
+	fread(&a,1,1,fp);
+	while(!feof(fp))
+	{
+		printf("%c	",a);
+		if(96<a<123)
+		{	
+			a++;
+			fseek(fp,-1,1);
+			fwrite(&a,1,1,fp);
+			fseek(fp,0,1);
+		}
+		fread(&a,1,1,fp);
+	}
+	fclose(fp);
+}
