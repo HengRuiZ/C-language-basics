@@ -1,0 +1,79 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct book{
+	int num;
+	char author[30];
+	book*next;
+};
+book*InsertO(book*q,book*p)
+{
+	book*head=q;
+	while(1)
+	{
+		if(q->num<p->num)
+		{p->next=q;return p;}
+		if(q->next==0)
+		{q->next=p;p->next=NULL;return head;}
+		if(q->num>=p->num&&(q->next)->num<p->num)
+		{p->next=q->next;q->next=p;return head;}
+		else q=q->next;
+	}
+}
+book*CreateListO(void)
+{
+	book*head,*p;
+	int num,i;
+	for(i=1;;i++)
+	{
+		printf("请输入书号，输入0退出\n");
+		scanf("%d",&num);
+		if(num==0)break;
+		p=(book*)malloc(sizeof(book));
+		p->num=num;
+		printf("请输入作者\n");
+		getchar();
+		gets(p->author);
+		if(i==1){head=p;p->next=NULL;continue;}
+		head=InsertO(head,p);
+	}
+	return head;
+}
+void PrintList(book*p)
+{
+	if(!p){printf("没有记录！\n");return;}
+	printf("书号	作者\n");
+	while(p)
+	{
+		printf("%d	%s\n",p->num,p->author);
+		p=p->next;
+	}
+}
+book*Combine(book*a,book*b)
+{
+	book*c,*p;
+	if(a->num>=b->num){c=a;a=a->next;}
+	else{c=b;b=b->next;}
+	p=c;
+	while(a&&b)
+	if(a->num>=b->num){p->next=a;a=a->next;p=p->next;}
+	else{p->next=b;b=b->next;p=p->next;}
+	if(a)p->next=a;
+	else p->next=b;
+	return c;
+}
+main()
+{
+	book*a,*b,*c;
+	printf("请输入第一个链表，无需有序\n");
+	a=CreateListO();
+	printf("请输入第二个链表，无需有序\n");
+	b=CreateListO();
+	printf("第一个链表：\n");
+	PrintList(a);
+	printf("第二个链表：\n");
+	PrintList(b);
+	c=Combine(a,b);
+	printf("合并后的链表：\n");
+	PrintList(c);
+	system("pause");
+}
