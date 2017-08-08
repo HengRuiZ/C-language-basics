@@ -1,0 +1,23 @@
+#include<stdio.h>
+#include<stdlib.h>
+FILE*fp,*fq;
+main()
+{
+	char a=' ',b[200];
+	int c=0;
+	if(!(fp=fopen("prototype1.cpp","r+"))){printf("打开源程序失败\n");return 0;}
+	if(!(fq=fopen("output1.cpp","w+"))){printf("创建打印文件失败\n");return 0;}
+	while(!feof(fp))
+	{
+		a=' ';
+		while(a==' ')
+		a=fgetc(fp);
+		printf("%c\n",a);
+		fprintf(fq,"%c",a);
+		fgets(b,200,fp);
+		fprintf(fq,"%s",b);
+	}
+	printf("完成");
+	fclose(fp);
+	fclose(fq);
+}
